@@ -18,41 +18,44 @@ class JSONResponse(HttpResponse):
 		kwargs['content_type']='application/json'
 		super(JSONResponse, self).__init__(content,**kwargs)
 
-	@csrf_exempt
-    def team_list(request):
-		if request.method=='GET':
-			Teams=models.Team.objects.all()
-			serializer=serializers.Team(Teams,many=True)
-			return JSONResponse(serializer.data)
-		elif request.method=='POST':
-			data=JSONParser().parse(request)
-			serializer=serializers.Team(data=data)
+@csrf_exempt
+def team_list(request):
+	"""
+	List all code snippets, or create a new snippet.
+	"""
+	if request.method == 'GET':
+		Teams = models.Team.objects.all()
+		serializer = serializers.Team(Teams, many=True)
+		return JSONResponse(serializer.data)
 
-			if serializer.is_valid():
-				serializer.save()
-				return JSONResponse(serializer.data, status=201)
+	elif request.method == 'POST':
+		data = JSONParser().parse(request)
+		serializer = serializers.Team(data=data)
+		if serializer.is_valid():
+			serializer.save()
+			return JSONResponse(serializer.data, status=201)
 		return JSONResponse(serializer.errors, status=400)
 
-	@csrf_exempt
-	def snippet_detail(request, pk):
+@csrf_exempt
+def team_detail(request, pk):
 
-		try:
-			Teams = models.Team.objects.get(pk=pk)
-		except Teams.DoesNotExist:
-			return HttpResponse(status=404)
+	try:
+		Teams = models.Team.objects.get(pk=pk)
+	except Teams.DoesNotExist:
+		return HttpResponse(status=404)
 
-		if request.method == 'GET':
-			serializer = serializers.Team(Teams)
+	if request.method == 'GET':
+		serializer = serializers.Team(Teams)
+		return JSONResponse(serializer.data)
+
+	elif request.method == 'PUT':
+		data = JSONParser().parse(request)
+		serializer = serializers.Team(Teams, data=data)
+		if serializer.is_valid():
+			serializer.save()
 			return JSONResponse(serializer.data)
+		return JSONResponse(serializer.errors, status=400)
 
-		elif request.method == 'PUT':
-			data = JSONParser().parse(request)
-			serializer = serializers.Team(Teams, data=data)
-			if serializer.is_valid():
-				serializer.save()
-				return JSONResponse(serializer.data)
-			return JSONResponse(serializer.errors, status=400)
-
-		elif request.method == 'DELETE':
-			Teams.delete()
-			return HttpResponse(status=204)
+	elif request.method == 'DELETE':
+		Teams.delete()
+		return HttpResponse(status=204)
