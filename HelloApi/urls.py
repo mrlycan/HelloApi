@@ -15,5 +15,5 @@ Including another URLconf
 """
 from django.conf.urls import url,include
 urlpatterns = [
-    url(r'^', include('League.urls')),
+    url(r'^', include('football.urls')),
 ]

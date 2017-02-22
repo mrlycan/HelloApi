@@ -1,5 +1,5 @@
 from rest_framework import serializers
-import League.models as models
+import football.models.models as models
 
 class Team(serializers.ModelSerializer):
 	class Meta:

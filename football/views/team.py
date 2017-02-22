@@ -4,8 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-import League.models as models
-import League.serializers as serializers
+import football.models.models as models
+import football.serializers as serializers
 
 
 class JSONResponse(HttpResponse):
@@ -40,22 +40,22 @@ def team_list(request):
 def team_detail(request, pk):
 
 	try:
-		Teams = models.Team.objects.get(pk=pk)
-	except Teams.DoesNotExist:
+		Team = models.Team.objects.get(pk=pk)
+	except Team.DoesNotExist:
 		return HttpResponse(status=404)
 
 	if request.method == 'GET':
-		serializer = serializers.Team(Teams)
+		serializer = serializers.Team(Team)
 		return JSONResponse(serializer.data)
 
 	elif request.method == 'PUT':
 		data = JSONParser().parse(request)
-		serializer = serializers.Team(Teams, data=data)
+		serializer = serializers.Team(Team, data=data)
 		if serializer.is_valid():
 			serializer.save()
 			return JSONResponse(serializer.data)
 		return JSONResponse(serializer.errors, status=400)
 
 	elif request.method == 'DELETE':
-		Teams.delete()
+		Team.delete()
 		return HttpResponse(status=204)

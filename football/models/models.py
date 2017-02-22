@@ -1,7 +1,7 @@
 from django.db import models
 import  time
 
-class league_team(models.Model):
+class Team(models.Model):
 	TeamId=models.IntegerField()
 	TeamENName=models.CharField(max_length=100)
 	TeamCNName=models.CharField(max_length=100)
@@ -15,8 +15,9 @@ class league_team(models.Model):
 	UpdateTime=models.DateTimeField(default=time.time())
 	class Meta:
 		ordering=('TeamId',)
+		app_label='League'
 
-class league_season(models.Model):
+class Season(models.Model):
 	SeasonId = models.IntegerField()
 	SeasonName = models.CharField(max_length=100)
 	LeagueId = models.IntegerField()
@@ -26,8 +27,9 @@ class league_season(models.Model):
 	EndTime = models.DateTimeField()
 	class Meta:
 		ordering=('SeasonId',)
+		app_label = 'League'
 
-class league_player(models.Model):
+class Player(models.Model):
 	CNName = models.CharField(max_length=100)
 	ENName = models.CharField(max_length=100)
 	TeamId = models.IntegerField()
@@ -36,8 +38,9 @@ class league_player(models.Model):
 	ImageUrl = models.CharField(max_length=100)
 	class Meta:
 		ordering=('TeamId',)
+		app_label = 'League'
 
-class sys_country(models.Model):
+class Country(models.Model):
 	CountryId = models.IntegerField()
 	CountryName = models.CharField(max_length=100)
 	CountryENName = models.CharField(max_length=100)
@@ -47,8 +50,9 @@ class sys_country(models.Model):
 
 	class Meta:
 		ordering=('CountryId',)
+		app_label = 'League'
 
-class sys_league(models.Model):
+class League(models.Model):
 	LeagueId = models.IntegerField()
 	LeagueName = models.CharField(max_length=100)
 	ENName = models.CharField(max_length=100)
@@ -62,4 +66,5 @@ class sys_league(models.Model):
 	Remark = models.TextField()
 	class Meta:
 		ordering=('LeagueId',)
+		app_label = 'League'
 
