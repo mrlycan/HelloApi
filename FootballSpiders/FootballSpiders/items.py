@@ -13,6 +13,7 @@ class TeamItem(scrapy.Item):
     TeamENName=scrapy.Field()
     TeamCNName=scrapy.Field()
     CoachName=scrapy.Field()
+    City=scrapy.Field()
     CourtName = scrapy.Field()
     FoundingTime = scrapy.Field()
     TeamLogoImage = scrapy.Field()
@@ -47,6 +48,5 @@ class PlayerItem(scrapy.Item):
     ContinentName=scrapy.Field()
     EventType = scrapy.Field()
     Remark = scrapy.Field()
-
     pass
 

@@ -13,7 +13,7 @@ BOT_NAME = 'FootballSpiders'
 
 SPIDER_MODULES = ['FootballSpiders.spiders']
 NEWSPIDER_MODULE = 'FootballSpiders.spiders'
-
+#ITEM_PIPELINES = ['FootballSpiders.FootballspidersPipeline']
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'FootballSpiders (+http://www.yourdomain.com)'
