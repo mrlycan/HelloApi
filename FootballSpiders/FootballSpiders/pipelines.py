@@ -8,7 +8,7 @@ import codecs
 import pymysql
 import time
 import FootballSpiders.items as items
-
+from datetime import datetime
 
 db_config={
     'host':'43.254.217.147',
@@ -39,19 +39,22 @@ class TeamPipeline(object):
         return  item
 
     def TeamItemAdd(self,item):
-        sql='insert into league_team(TeamId,TeamENName,TeamCNName,CoachName,CourtName,ImageUrl,Remark,UpdateTime) VALUES(%$,%$,%$,%$,%$,%$,%$,%$)'
+        sql='insert into league_team(TeamId,TeamENName,TeamCNName,CoachName,CourtName,ImageUrl,Remark,UpdateTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'
 
         try:
             self.cursor.execute(sql,(
-                1,
+                int(self.cursor.lastrowid),
                 item['TeamENName'],
                 item['TeamCNName'].encode('utf-8'),
                 item['CoachName'].encode('utf-8'),
                 item['CourtName'].encode('utf-8'),
                 item['ImageUrl'].encode('utf-8'),
                 item['Remark'].encode('utf-8'),
-                time.time()
+                datetime.fromtimestamp(time.time())
                 ))
+            self.connection.commit()
+            self.cursor.close()
+            self.connection.close()
         except pymysql.Error as e:
             print(e.args)
         return  item
