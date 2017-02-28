@@ -59,5 +59,15 @@ class TeamPipeline(object):
             print(e.args)
         return  item
 
+    def PlayerItemAdd(self,item):
+        sql=''
 
+        try:
+            self.cursor.execute(sql,(
+                item['TeamID'],
+            ))
+
+        except pymysql.Error as e:
+            print(e.args)
+        return item
 
