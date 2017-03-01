@@ -56,9 +56,10 @@ class TeamSpider(scrapy.Spider):
         city=parent.xpath('//dl[@class="clearfix"]/dd[3]/text()').extract()[0]
         court=parent.xpath('ul[2]/li[1]/text()').extract()[0]
         for url in next_links:
-            yield Request(url, callback=self.parse_player)
+            #yield Request(url, callback=self.parse_player)
+            yield  Request(url,callback=lambda response,teamitem=item:self.parse_player(response,teamitem))
         #return tempItems
-    def parse_player(self,response):
+    def parse_player(self,response,teamItem):
         tempItems = []
 
         parent=response.selector.xpath('//ul[@class="player_detail"]/li')
@@ -122,33 +123,52 @@ class TeamS01pider(CrawlSpider):
         item['Remark']=''
         yield item
         for url in next_links:
-            yield Request(url, callback=self.parse_player)
+            yield Request(url, callback=lambda response,teamitem=item:self.parse_player(response,teamitem))
 
-    def parse_player(self,response):
+    def parse_player(self,response,teamItem):
+
         item = items.PlayerItem()
         parent=response.selector.xpath('//ul[@class="player_detail"]')
         CNName=parent.xpath('li[@class="center"]/b[1]/text()').extract()
-        item['CNName']=CNName[0] if len(CNName)>0 else ''
+        item['CNName']=self.checkFirstStr(CNName)
 
         ENName=parent.xpath('li[@class="center"]/b[2]/text()').extract()
-        item['ENName'] = ENName[0] if len(ENName) > 0 else ''
+        item['ENName'] = self.checkFirstStr(ENName)
 
         CountryName=parent.xpath('li[@class="center"]/span[1]/text()').extract()
-        item['CountryName'] = CountryName[0] if len(CountryName) > 0 else ''
+        item['CountryName'] = self.checkFirstStr(CountryName)
+
         Birthday = parent.xpath('li[@class="center"]/span[2]/text()').extract()
-        item['Birthday'] = Birthday[0] if len(Birthday) > 0 else ''
+        item['Birthday'] = self.checkFirstStr(Birthday,'\d{4}-\d{2}-\d{2}')
+
         BodyWeight=parent.xpath('li[@class="center"]/span[3]/text()').extract()
-        item['BodyWeight'] = BodyWeight[0] if len(BodyWeight) > 0 else ''
+        item['BodyWeight'] = self.checkFirstStr(BodyWeight,'\d+')
 
         Height=parent.xpath('li[3]/span[1]/text()').extract()
-        item['Height'] = Height[0] if len(Height) > 0 else ''
+        item['Height'] = self.checkFirstStr(Height,'\d+')
 
         TeamName = parent.xpath('li[3]/span[2]/a/text()').extract()
-        item['TeamName'] = TeamName[0] if len(TeamName) > 0 else ''
+        item['TeamName'] = self.checkFirstStr(TeamName)
 
         Position = parent.xpath('li[3]/span[3]/text()').extract()
-        item['Position'] = Position[0] if len(Position) > 0 else ''
+        item['Position'] = self.checkFirstStr(Position)
 
         Number=parent.xpath('li[3]/span[4]/text()').extract()
         item['Number'] = Number[0] if len(Number) > 0 else ''
+
+        item['TeamId']=teamItem['id']
+        item['TeamName']=teamItem['TeamCNName']
+
+        image = parent.xpath('li[1]/img/@src').extract()
+        if len(image) > 0:
+            item['ImageUrl'] = 'https:' + image[0]
         yield item
+
+    def checkFirstStr(self,list,reg=None):
+        if len(list)<=0:
+            return ''
+        if reg is None:
+           return list[0] if len(list) > 0 else ''
+        else:
+            str = re.findall(reg, list[0])
+            return str[0].strip() if len(str) > 0 else ''

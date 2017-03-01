@@ -30,20 +30,24 @@ class TeamPipeline(object):
         self.cursor=self.connection.cursor()
         #self.file = codecs.open('CSDNBlog_data.json', mode='wb', encoding='utf-8')
     def process_item(self, item, spider):
+        self.cursor.connection()
 
         if isinstance(item,items.PlayerItem):
             print('PlayerItem')
+            self.PlayerItemAdd(item)
         if isinstance(item,items.TeamItem):
             print('Team')
             self.TeamItemAdd(item)
+
+        self.cursor.close()
+        self.connection.close()
         return  item
 
     def TeamItemAdd(self,item):
-        sql='insert into league_team(TeamId,TeamENName,TeamCNName,CoachName,CourtName,ImageUrl,Remark,UpdateTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)'
+        sql='insert into league_team(ENName,CNName,CoachName,CourtName,ImageUrl,Remark,UpdateTime) VALUES(%s,%s,%s,%s,%s,%s,%s)'
 
         try:
             self.cursor.execute(sql,(
-                int(self.cursor.lastrowid),
                 item['TeamENName'],
                 item['TeamCNName'].encode('utf-8'),
                 item['CoachName'].encode('utf-8'),
@@ -53,19 +57,34 @@ class TeamPipeline(object):
                 datetime.fromtimestamp(time.time())
                 ))
             self.connection.commit()
-            self.cursor.close()
-            self.connection.close()
+            item['id']=int(self.cursor.lastrowid)
+
         except pymysql.Error as e:
             print(e.args)
         return  item
 
     def PlayerItemAdd(self,item):
-        sql=''
+        sql='INSERT into league_player(CNName,ENName,Status,TeamId,TeamName,CountryName,Birthday,BodyWeight,Height,Position,Number,ImageUrl)' \
+            'VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'
 
         try:
             self.cursor.execute(sql,(
-                item['TeamID'],
+                item['CNName'].encode('utf-8'),
+                item['ENName'],
+                0,
+                item['TeamId'],
+                item['TeamName'],
+                item['CountryName'].encode('utf-8'),
+                datetime.strptime(item['Birthday'], '%Y-%m-%d'),
+
+                item['BodyWeight'],
+                item['Height'],
+                item['Position'],
+                item['Number'],
+                item['ImageUrl']
             ))
+            self.connection.commit()
+            item['id'] = int(self.cursor.lastrowid)
 
         except pymysql.Error as e:
             print(e.args)

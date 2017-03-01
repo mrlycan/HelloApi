@@ -9,7 +9,7 @@ import scrapy
 
 
 class TeamItem(scrapy.Item):
-
+    id=scrapy.Field()
     TeamENName=scrapy.Field()
     TeamCNName=scrapy.Field()
     CoachName=scrapy.Field()
@@ -51,5 +51,6 @@ class PlayerItem(scrapy.Item):
     Position = scrapy.Field()
     Number = scrapy.Field()
     ImageUrl = scrapy.Field()
+    id=scrapy.Field()
     pass
 

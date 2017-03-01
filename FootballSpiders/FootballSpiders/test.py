@@ -3,7 +3,6 @@
 from scrapy import cmdline
 import time
 from datetime import  datetime
+import re
 
-print(time.localtime())
-print(datetime.fromtimestamp(time.time()))
 cmdline.execute("scrapy crawl Team01".split())
