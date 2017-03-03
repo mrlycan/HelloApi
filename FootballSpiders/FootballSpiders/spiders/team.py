@@ -87,7 +87,7 @@ class TeamS01pider(CrawlSpider):
 
     rules = (
         Rule(LinkExtractor(allow=(r'https://soccer.hupu.com/teams/121',)), callback='parse_team01'),
-        Rule(LinkExtractor(allow=(r'https://soccer.hupu.com/g/players/[a-z]-\d.html"',)),callback='parse_player'),
+        #Rule(LinkExtractor(allow=(r'https://soccer.hupu.com/g/players/[a-z]-\d.html"',)),callback='parse_player'),
     )
 
     def parse_team01(self,response):
@@ -120,6 +120,7 @@ class TeamS01pider(CrawlSpider):
         image=parent.xpath('ul[1]/li[@class=" left pic_logo"]/img/@src').extract()
         if len(image)>0:
             item['ImageUrl']='https:'+image[0]
+        item['id'] = 0
         item['Remark']=''
         yield item
         for url in next_links:
